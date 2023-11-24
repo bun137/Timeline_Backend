@@ -36,11 +36,23 @@ app.get('/', (req, res) => {
     }
 );
 
-app.post('/save_data', connectMiddleware, (req, res) => {
+app.post('/save_data', connectMiddleware, async (req, res) => {
   let toInsert = req.body;
   toInsert.timeStamp = Date.now();
-  req.collection.insertOne(toInsert);
-  console.log(req.body.blocks[0].data.text);
+  await req.collection.insertOne(toInsert);
+  res.sendStatus(200);
+  // console.log(req.body.blocks[0].data.text);
+})
+
+app.get("/get_editor_data", connectMiddleware, async (req, res) => {
+  const editori_id = req.query.editori_id;
+  const result = await req.collection.findOne({ _id: editori_id });
+  res.json(result);
+});
+
+app.get("/get_yevirithing", connectMiddleware, async (req, res) => {
+  const result = await req.collection.find({}).toArray();
+  res.json(result);
 })
 
 app.listen(5000, () => {
@@ -48,3 +60,4 @@ app.listen(5000, () => {
     }
 );
 
+module.exports = app;
