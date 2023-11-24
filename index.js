@@ -1,8 +1,8 @@
 const express = require('express');
 const app = express();
 app.use(express.json());
-const { MongoClient, ServerApiVersion } = require("mongodb");
-require("dotenv").config();
+const { MongoClient, ServerApiVersion } = require('mongodb');
+require('dotenv').config();
 const uri = process.env.MONGODB_URI;
 console.log(uri);
 async function connect_to_db() {
@@ -14,8 +14,8 @@ async function connect_to_db() {
     },
   });
   await client.connect();
-  const dbName = "clusteri0";
-  const collectionName = "editorData";
+  const dbName = 'clusteri0';
+  const collectionName = 'editorData';
 
   const database = client.db(dbName);
   const collection = database.collection(collectionName);
@@ -29,12 +29,9 @@ const connectMiddleware = async (req, res, next) => {
   next();
 };
 
-
-
 app.get('/', (req, res) => {
-    res.json({message: 'Hello World!',name: 'John Doe'});
-    }
-);
+  res.json({ message: 'Hello World!', name: 'John Doe' });
+});
 
 app.post('/save_data', connectMiddleware, async (req, res) => {
   let toInsert = req.body;
@@ -42,22 +39,21 @@ app.post('/save_data', connectMiddleware, async (req, res) => {
   await req.collection.insertOne(toInsert);
   res.sendStatus(200);
   // console.log(req.body.blocks[0].data.text);
-})
+});
 
-app.get("/get_editor_data", connectMiddleware, async (req, res) => {
+app.get('/get_editor_data', connectMiddleware, async (req, res) => {
   const editori_id = req.query.editori_id;
   const result = await req.collection.findOne({ _id: editori_id });
   res.json(result);
 });
 
-app.get("/get_yevirithing", connectMiddleware, async (req, res) => {
+app.get('/get_yevirithing', connectMiddleware, async (req, res) => {
   const result = await req.collection.find({}).toArray();
   res.json(result);
-})
+});
 
 app.listen(5000, () => {
-    console.log('Example app listening on port 5000!');
-    }
-);
+  console.log('Example app listening on port 5000!');
+});
 
 module.exports = app;
